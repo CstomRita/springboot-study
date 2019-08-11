@@ -248,7 +248,100 @@ pets: [cat,dog,pig]
 
 #### 2.2 配置文件注入案例
 
+##### 2.0 导入配置文件处理器依赖
+
+```
+<!‐‐导入配置文件处理器，配置文件进行绑定就会有提示‐‐> 
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring‐boot‐configuration‐processor</artifactId>
+            <optional>true</optional>
+        </dependency>
+```
+
+不导入并不会出错，只是没有提示不方便开发
+
+##### 2.1 JavaBean的@ConfigurationProperties
+
+`@ConfigurationProperties(prefix)`
+
+1. 告诉SpringBoot将本类中的所有属性和配置文件中相关的配置进行绑定
+2. prefix = "xx"，将和配置文件中<font color=red>key值为xx</font>下面的所有属性进行一一映射 
+
+3. <font color=red>**只有这个组件是容器中的组件，才能容器提供的@ConfigurationProperties功能，所以还需要@Component加入容器**</font>
+
+```java
+@Component
+@ConfigurationProperties("person")
+public class Person {
+
+    private String name;
+    private Integer age;
+    private Map<String,Object> maps;
+    private List<Object> list;
+    private Dog dog;
+}
+```
+
+<font color=red>**此外还需要生成get/set方法**</font>
+
+@AutoWired是使用get/set方法注入的，不写get/set方法是没有办法自动注入的
+
+##### 2.2 yaml配置文件
+
+```yaml
+# demo1中的Person类注入
+person:
+  name: 张三
+  age: 18
+  maps: {k1: v1,k2: v2}
+  list: [list1,list2,list3]
+  dog: {dogName: dog,dogAge: 3,dogMaps: {dogk1: dogv1,dogk2: dogv2},doglist: [doglist1,doglist2,doglist3]}
+```
+
+##### 2.3 SpringBootTest
+
+在test下生成了一个SpringBoot的单元测试
+
+```java
+package cn.cst.springbootstudy;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
+
+@RunWith(SpringRunner.class)
+@SpringBootTest
+public class SpringbootStudyApplicationTests {
+
+    @Test
+    public void contextLoads() {
+    }
+
+}
+```
+
+主要是两个注解：
+
+1. 
+   @SpringBootTest：表明是SpringBoot的单元测试
+2. @RunWith(SpringRunner.class)：使用Spring的驱动测试，而非普通的JVM，可以在测试期间使用容器自动注入@Autowired等功能
 
 
 
+在此部分进行单元测试：
+
+```java
+public class SpringbootStudyApplicationTests {
+
+    @Autowired
+    Person person;
+    @Test
+    public void contextLoads() {
+        System.out.println(person.toString());
+    }
+
+}
+```
 

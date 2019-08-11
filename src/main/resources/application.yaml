@@ -1,0 +1,7 @@
+# demo1中的Person类注入
+person:
+  name: 张三
+  age: 18
+  maps: {k1: v1,k2: v2}
+  list: [list1,list2,list3]
+  dog: {dogName: dog,dogAge: 3,dogMaps: {dogk1: dogv1,dogk2: dogv2},doglist: [doglist1,doglist2,doglist3]}
